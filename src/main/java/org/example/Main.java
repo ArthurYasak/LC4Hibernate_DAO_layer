@@ -3,10 +3,7 @@ package org.example;
 import dao.UserDAOImpl;
 import models.Lot;
 import models.User;
-import models.UserManager;
 import models.UserType;
-
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
