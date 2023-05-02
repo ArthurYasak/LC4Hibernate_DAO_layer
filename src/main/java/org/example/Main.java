@@ -1,35 +1,49 @@
 package org.example;
 
 import dao.UserDAOImpl;
+import models.Bet;
 import models.Lot;
 import models.User;
 import models.UserType;
 
 public class Main {
     public static void main(String[] args) {
-        User user = new User(UserType.GUEST);
-        user.setUserBalance(1000.0);
-        // user.setUserType(UserType.ADMIN);
+        User user1 = new User(UserType.GUEST);
+        user1.setUserBalance(1_000.0);
+        user1.setUserType(UserType.ADMIN);
+
+        User user2 = new User(UserType.USER);
+        user2.setUserBalance(12_000.0);
 
         Lot lot1 = new Lot();
         lot1.setMinPrice(100.0);
+        lot1.setUserOwner(user1);
+
         Lot lot2 = new Lot();
-        lot2.setCurrentPrice(2000.0);
+        lot2.setCurrentPrice(2_000.0);
+        lot2.setUserOwner(user2);
+        // lot2.setLastCustomer(user1);
 
-        lot1.setUserOwner(user);
-        lot2.setUserOwner(user);
+        Bet bet1 = new Bet(200.0);
 
-        user.addUserLot(lot1);
-        user.stayLastCustomerIn(lot2);
-        System.out.println(user);
+        // bet1.setUserOwner(user1);
+        bet1.setUserOwner(user2);
+
+        System.out.println("POJO User: " + user1);
 
         UserDAOImpl userDAO = new UserDAOImpl();
 
-        // System.out.println("Delete ALL: " + userDAO.deleteAll());
+        System.out.println("Delete ALL: " + userDAO.deleteAll());
 
-        System.out.println("Add User: " + userDAO.add(user));
-        User updUser = userDAO.update(user);
-        System.out.println("Update User: " + updUser);
+        System.out.println("User was add: " + userDAO.add(user1));
+        User updUser1 = userDAO.update(user1);
+        System.out.println("Updated User 1: " + updUser1);
+
+        System.out.println("User was add: " + userDAO.add(user2));
+        User updUser2 = userDAO.update(user2);
+        System.out.println("Updated User 2: " + updUser2);
+
+        // System.out.println("Get user by id: " + userDAO.getById(8));
 
         System.out.println("All users:\n" + userDAO.getAll());
 

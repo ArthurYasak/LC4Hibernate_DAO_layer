@@ -19,6 +19,9 @@ public class HibernateSessionFactoryUtil {
                         .addAnnotatedClass(models.User.class)
                         .addAnnotatedClass(models.Lot.class)
                         .addAnnotatedClass(models.LotProperty.class)
+                        .addAnnotatedClass(models.Bet.class)
+                        .addAnnotatedClass(models.UserData.class)
+                        .addAnnotatedClass(models.AuthorizationData.class)
                         .buildSessionFactory();
             } catch (Exception e) {
                 System.out.println("EXCEPTION! ");

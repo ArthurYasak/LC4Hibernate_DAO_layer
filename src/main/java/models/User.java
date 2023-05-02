@@ -14,12 +14,19 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
+    private AuthorizationData authorizationData;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type")
     private UserType userType;
 
     @Column(name = "user_balance")
     private Double userBalance;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "user_data_id")
+    private UserData userData;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_owner_id")
@@ -29,19 +36,27 @@ public class User {
     @JoinColumn(name = "last_customer_id")
     private List<Lot> lastCustomerIn;
 
-    public User() {
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) // no fetch
+    @JoinColumn(name = "user_owner_id")
+    private List<Bet> userBets;
 
+    public User() {
+        this.userType = UserType.GUEST;
+        userLots = new ArrayList<>();
+        lastCustomerIn = new ArrayList<>();
+        userBets = new ArrayList<>();
     }
 
     public User(UserType userType) {
         this.userType = userType;
         userLots = new ArrayList<>();
         lastCustomerIn = new ArrayList<>();
+        userBets = new ArrayList<>();
     }
 
     public void addUserLot(Lot lot) {
-        lot.setUserOwner(this);
         userLots.add(lot);
+        // lot.setUserOwner(this);
     }
 
     public void removeUserLot(Lot lot) {
@@ -49,16 +64,33 @@ public class User {
     }
 
     public void stayLastCustomerIn(Lot lot) {
-        lot.setLastCustomer(this);
         lastCustomerIn.add(lot);
+        // lot.setLastCustomer(this);
     }
 
     public void stopLastCustomerIn(Lot lot) {
         lastCustomerIn.remove(lot);
     }
 
+    public void addUserBet(Bet bet) {
+        userBets.add(bet);
+        // bet.setUserOwner(this);
+    }
+
+    public void removeUserBet(Bet bet) {
+        userBets.remove(bet);
+    }
+
     public Integer getUserId() {
         return userId;
+    }
+
+    public AuthorizationData getAuthorizationData() {
+        return authorizationData;
+    }
+
+    public void setAuthorizationData(AuthorizationData authorizationData) {
+        this.authorizationData = authorizationData;
     }
 
     public UserType getUserType() {
@@ -77,6 +109,14 @@ public class User {
         this.userBalance = userBalance;
     }
 
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public void setUserData(UserData userData) {
+        this.userData = userData;
+    }
+
     public List<Lot> getUserLots() {
         return userLots;
     }
@@ -93,6 +133,14 @@ public class User {
         this.lastCustomerIn = lastCustomerIn;
     }
 
+    public List<Bet> getUserBets() {
+        return userBets;
+    }
+
+    public void setUserBets(List<Bet> userBets) {
+        this.userBets = userBets;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -101,6 +149,7 @@ public class User {
                 ", userBalance=" + userBalance +
                 ", userLots=" + userLots +
                 ", lastCustomerIn=" + lastCustomerIn +
+                ", userBets=" + userBets +
                 '}' + '\n';
     }
 

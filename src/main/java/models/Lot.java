@@ -13,7 +13,7 @@ public class Lot {
     @Column(name = "lot_id")
     private Integer lotId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER) // мб LAZY
     @JoinColumn(name = "user_owner_id")
     private User userOwner;
 
@@ -27,7 +27,7 @@ public class Lot {
     @Column(name = "min_price")
     private Double minPrice;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // мб LAZY
     @JoinColumn(name = "last_customer_id")
     private User lastCustomer;
 
@@ -48,6 +48,7 @@ public class Lot {
 
     public void setUserOwner(User userOwner) {
         this.userOwner = userOwner;
+        userOwner.addUserLot(this);
     }
 
     public LotProperty getProperty() {
@@ -79,6 +80,7 @@ public class Lot {
 
     public void setLastCustomer(User lastCustomer) {
         this.lastCustomer = lastCustomer;
+        lastCustomer.stayLastCustomerIn(this);
     }
 
     public Double getCurrentPrice() {
@@ -89,18 +91,18 @@ public class Lot {
         this.currentPrice = currentPrice;
     }
 
-    // @Override
-    // public String toString() {
-    //     return "Lot{" +
-    //             "lotId=" + lotId +
-    //             ", userOwner=" + userOwner.getUserId() +
-    //             ", property=" + property +
-    //             ", soldUntil=" + soldUntil +
-    //             ", minPrice=" + minPrice +
-    //             ", lastCustomer=" + (lastCustomer == null ? "not" : lastCustomer.getUserId()) +
-    //             ", currentPrice=" + currentPrice +
-    //             '}';
-    // }
+    @Override
+    public String toString() {
+        return "Lot{" +
+                "lotId=" + lotId +
+                ", userOwnerId=" + userOwner.getUserId() +
+                // ", property=" + property +
+                // ", soldUntil=" + soldUntil +
+                // ", minPrice=" + minPrice +
+                ", lastCustomerId=" + (lastCustomer == null ? "not" : lastCustomer.getUserId()) +
+                ", currentPrice=" + currentPrice +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {

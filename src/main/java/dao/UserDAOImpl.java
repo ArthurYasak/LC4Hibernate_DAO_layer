@@ -24,7 +24,6 @@ public class UserDAOImpl implements UserDAO {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.persist(user);
-            // session.flush();
             transaction.commit();
             return true;
         } catch(Throwable t) {

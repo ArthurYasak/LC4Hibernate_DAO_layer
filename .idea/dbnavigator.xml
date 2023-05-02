@@ -38,10 +38,7 @@
     </last-used-providers>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="3b3a5e02-4f9b-4bac-a5cd-d38a679f231b" object-ref="schemas/public/tables/users" />
-      <object connection-id="3b3a5e02-4f9b-4bac-a5cd-d38a679f231b" object-ref="schemas/public/tables/lots" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="3b3a5e02-4f9b-4bac-a5cd-d38a679f231b" dataset="public.comissions" active-filter-id="" />
