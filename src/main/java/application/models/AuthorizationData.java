@@ -1,4 +1,4 @@
-package daoApp.models;
+package application.models;
 
 import jakarta.persistence.*;
 

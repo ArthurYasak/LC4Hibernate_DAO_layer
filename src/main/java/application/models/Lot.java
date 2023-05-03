@@ -1,8 +1,8 @@
-package daoApp.models;
+package application.models;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +22,7 @@ public class Lot {
     private LotProperty property;
 
     @Column(name = "sold_until")
-    private Date soldUntil;
+    private LocalDateTime soldUntil;
 
     @Column(name = "min_price")
     private Double minPrice;
@@ -58,11 +58,11 @@ public class Lot {
         this.property = property;
     }
 
-    public Date getSoldUntil() {
+    public LocalDateTime getSoldUntil() {
         return soldUntil;
     }
 
-    public void setSoldUntil(Date soldUntil) {
+    public void setSoldUntil(LocalDateTime soldUntil) {
         this.soldUntil = soldUntil;
     }
 

@@ -1,6 +1,4 @@
-package daoApp.models;
-
-import jakarta.persistence.*;
+package application.models;
 
 public enum UserType {
     ADMIN,

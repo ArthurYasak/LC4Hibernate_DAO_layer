@@ -1,10 +1,10 @@
-package daoApp.org.example;
+package application.main;
 
-import daoApp.dao.UserDAOImpl;
-import daoApp.models.Bet;
-import daoApp.models.Lot;
-import daoApp.models.User;
-import daoApp.models.UserType;
+import application.dao.UserDAOImpl;
+import application.models.Bet;
+import application.models.Lot;
+import application.models.User;
+import application.models.UserType;
 
 public class Main {
     public static void main(String[] args) {
@@ -46,8 +46,6 @@ public class Main {
         // System.out.println("Get user by id: " + userDAO.getById(8));
 
         System.out.println("All users:\n" + userDAO.getAll());
-
-        userDAO.closeSession();
 
 
         // UserManager userManager = new UserManager();
