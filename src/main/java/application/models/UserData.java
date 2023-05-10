@@ -2,6 +2,8 @@ package application.models;
 
 import jakarta.persistence.*;
 
+import java.util.Arrays;
+
 @Entity
 @Table(name = "users_data")
 public class UserData {
@@ -10,7 +12,7 @@ public class UserData {
     @Column(name = "user_data_id")
     private Integer userDataId;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)  // CascadeType.ALL
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -94,5 +96,20 @@ public class UserData {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
+    }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "userDataId=" + userDataId +
+                ", userId=" + user.getUserId() +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", age=" + age +
+                ", telephone='" + telephone + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                '}';
     }
 }

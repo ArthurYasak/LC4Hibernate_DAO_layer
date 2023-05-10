@@ -31,6 +31,7 @@ public class HibernateSessionFactoryUtil {
                         .addAnnotatedClass(Bet.class)
                         .addAnnotatedClass(UserData.class)
                         .addAnnotatedClass(AuthorizationData.class)
+                        .addAnnotatedClass(Commission.class)
                         .buildSessionFactory();
             } catch (Exception e) {
                 System.out.println("EXCEPTION! ");

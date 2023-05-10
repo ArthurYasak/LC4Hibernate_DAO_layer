@@ -5,10 +5,10 @@ import application.models.User;
 import java.util.List;
 
 public interface UserDAO {
-    List<User> getAll();
-    User getById(Integer userId);
-    boolean add(User user);
-    User update(User user);
-    boolean deleteAll();
-    boolean delete(Integer userId);
+    List<User> getAll() throws Exception;
+    User getById(Integer userId) throws Exception;
+    void add(User user) throws Exception;
+    User update(User user) throws Exception;
+    void deleteAll() throws Exception;
+    void deleteById(Integer userId) throws Exception;
 }

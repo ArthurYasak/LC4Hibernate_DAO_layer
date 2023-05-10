@@ -24,11 +24,13 @@ public class User {
     @Column(name = "user_balance")
     private Double userBalance;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH}, // CascadeType.PERSIST
+            mappedBy = "user", fetch = FetchType.EAGER)  // , orphanRemoval = true
     @JoinColumn(name = "user_data_id")
     private UserData userData;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH},
+            orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_owner_id")
     private List<Lot> userLots;
 
@@ -36,7 +38,7 @@ public class User {
     @JoinColumn(name = "last_customer_id")
     private List<Lot> lastCustomerIn;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) // no fetch
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_owner_id")
     private List<Bet> userBets;
 
@@ -56,7 +58,7 @@ public class User {
 
     public void addUserLot(Lot lot) {
         userLots.add(lot);
-        // lot.setUserOwner(this);
+        lot.setUserOwner(this);
     }
 
     public void removeUserLot(Lot lot) {
@@ -65,7 +67,7 @@ public class User {
 
     public void stayLastCustomerIn(Lot lot) {
         lastCustomerIn.add(lot);
-        // lot.setLastCustomer(this);
+        lot.setLastCustomer(this);
     }
 
     public void stopLastCustomerIn(Lot lot) {
@@ -74,7 +76,7 @@ public class User {
 
     public void addUserBet(Bet bet) {
         userBets.add(bet);
-        // bet.setUserOwner(this);
+        bet.setUserOwner(this);
     }
 
     public void removeUserBet(Bet bet) {
@@ -91,6 +93,7 @@ public class User {
 
     public void setAuthorizationData(AuthorizationData authorizationData) {
         this.authorizationData = authorizationData;
+        authorizationData.setUser(this);
     }
 
     public UserType getUserType() {
@@ -115,6 +118,7 @@ public class User {
 
     public void setUserData(UserData userData) {
         this.userData = userData;
+        userData.setUser(this);
     }
 
     public List<Lot> getUserLots() {
@@ -143,13 +147,16 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", userType=" + userType +
-                ", userBalance=" + userBalance +
-                ", userLots=" + userLots +
-                ", lastCustomerIn=" + lastCustomerIn +
-                ", userBets=" + userBets +
+        return "User{" + '\n' +
+                "userId=" + userId + '\n' +
+                ", authorization data=" + authorizationData + '\n' +
+                ", userType=" + userType + '\n' +
+                ", userBalance=" + userBalance + '\n' +
+                ", userName=" + (userData == null ? "null" : userData.getName()) + '\n' +
+                ", userSurname=" + (userData == null ? "null" : userData.getSurname()) + '\n' +
+                ", userLots=" + userLots + '\n' +
+                ", lastCustomerIn=" + lastCustomerIn + '\n' +
+                ", userBets=" + userBets + '\n' +
                 '}' + '\n';
     }
 

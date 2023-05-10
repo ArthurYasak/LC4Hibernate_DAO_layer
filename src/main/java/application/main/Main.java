@@ -1,65 +1,204 @@
 package application.main;
 
 import application.dao.UserDAOImpl;
-import application.models.Bet;
-import application.models.Lot;
-import application.models.User;
-import application.models.UserType;
+import application.models.*;
+
 
 public class Main {
     public static void main(String[] args) {
+        UserDAOImpl userDAO = new UserDAOImpl();
+
+        try {
+            // userDAO.deleteAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("users was NOT delete \n");
+        }
+
         User user1 = new User(UserType.GUEST);
         user1.setUserBalance(1_000.0);
+
+        UserData user1Data = new UserData();
+        user1Data.setAge(26);
+        user1Data.setName("Arthur");
+        user1Data.setSurname("Yasak");
+        user1.setUserData(user1Data);
+
+        System.out.printf("POJO User %s: %s\n", (user1 == null ?
+                "null" : (user1.getUserData() == null ?
+                "null" : user1.getUserData().getName())), user1);
+
+        try {
+            userDAO.add(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User was NOT add " + '\n');
+        }
+
         user1.setUserType(UserType.ADMIN);
+
+        AuthorizationData user1Authorization = new AuthorizationData();
+        user1Authorization.setLogin("root");
+        user1Authorization.setPassword("root");
+        user1.setAuthorizationData(user1Authorization);
+
+        try {
+            user1 = userDAO.update(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
+        }
+
+        // user1.setUserType(UserType.USER);
+        // userDAO.update(user1);   // If CascadeType.ALL: EntityNotFoundException deleted object would be re-saved by cascade (remove deleted object from associations): [application.models.UserData#81]
 
         User user2 = new User(UserType.USER);
         user2.setUserBalance(12_000.0);
 
+        UserData user2Data = new UserData();
+        user2Data.setAge(25);
+        user2Data.setName("Ivan");
+        user2Data.setSurname("Bogush");
+        user2.setUserData(user2Data);
+
+        AuthorizationData user2Authorization = new AuthorizationData();
+        user2Authorization.setLogin("root");
+        user2Authorization.setPassword("root");
+        user2.setAuthorizationData(user2Authorization);
+
+        System.out.printf("POJO User %s: %s\n", (user2 == null ?
+                "null" : (user2.getUserData() == null ?
+                "null" : user2.getUserData().getName())), user2);
+
+        try {
+            userDAO.add(user2);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        try {
+            user2 = userDAO.update(user2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
+        }
+
         Lot lot1 = new Lot();
         lot1.setMinPrice(100.0);
-        lot1.setUserOwner(user1);
+        user1.addUserLot(lot1);
+
+        try {
+            user1 = userDAO.update(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
+        }
+
+        LotProperty lot1Property = new LotProperty();
+        lot1Property.setDescription("JBL Flip 5");
+        lot1Property.setWeight(600);
+        lot1.setProperty(lot1Property);
+
+        try {
+            user1 = userDAO.update(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
+        }
+
+        Commission lot1Commission = new Commission();
+        lot1Commission.setCommissionPercent(12.34);
+        lot1.setCommission(lot1Commission);
+
+        try {
+            user1 = userDAO.update(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
+        }
 
         Lot lot2 = new Lot();
         lot2.setCurrentPrice(2_000.0);
-        lot2.setUserOwner(user2);
-        // lot2.setLastCustomer(user1);
+        user2.addUserLot(lot2);
+
+        try {
+            user2 = userDAO.update(user2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
+        }
 
         Bet bet1 = new Bet(200.0);
+        user1.addUserBet(bet1);
 
-        // bet1.setUserOwner(user1);
-        bet1.setUserOwner(user2);
+        // Checking that user1 will not an owner of bet when user 2 will be owner of it
+        System.out.println("USER 1: " + user1);
+        user2.addUserBet(bet1);
+        System.out.println("USER 1: " + user1);
 
-        System.out.println("POJO User: " + user1);
+        try {
+            user2 = userDAO.update(user2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
+        }
 
-        UserDAOImpl userDAO = new UserDAOImpl();
+        user1.stayLastCustomerIn(lot2);
 
-        System.out.println("Delete ALL: " + userDAO.deleteAll());
+        try {
+            user1 = userDAO.update(user1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
+        }
 
-        System.out.println("User was add: " + userDAO.add(user1));
-        User updUser1 = userDAO.update(user1);
-        System.out.println("Updated User 1: " + updUser1);
+        // Checking that last customer was updated
+        System.out.println("USER 2: " + user2);
 
-        System.out.println("User was add: " + userDAO.add(user2));
-        User updUser2 = userDAO.update(user2);
-        System.out.println("Updated User 2: " + updUser2);
+        try {
+            user2 = userDAO.update(user2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
+        }
 
-        // System.out.println("Get user by id: " + userDAO.getById(8));
+        int requiredId = 4;
+        try {
+            userDAO.getById(requiredId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Can NOT find user with id: " + requiredId + '\n');
+        }
 
-        System.out.println("All users:\n" + userDAO.getAll());
+        int deletedId = 3;
+        try {
+            userDAO.deleteById(deletedId);
+        } catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("User with id: " + deletedId + " was NOT deleted \n");
+        }
 
+        try {
+            userDAO.getFirstUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Can NOT return first user \n");
+        }
 
-        // UserManager userManager = new UserManager();
-        // userManager.init();
-        // System.out.println(userManager.saveUser(user1));
-        // List<User> users = userManager.getAllUsers();
-        // System.out.println(users);
+        try {
+            userDAO.getLastUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Can NOT return last user \n");
+        }
 
-        // User userForUpdate = userManager.getUserById(3);
-        // userForUpdate.setUserType(UserType.USER);
-        // System.out.println(userForUpdate.getUserId());
-        // System.out.println(userForUpdate.getUserType());
-        // userManager.updateUser(userForUpdate);
+        try {
+            userDAO.getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Can NOT print all users");
+        }
 
-        // userManager.removeUser(userManager.getUserById(11));
     }
 }

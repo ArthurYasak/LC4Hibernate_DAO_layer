@@ -10,7 +10,7 @@ public class Bet {
     @Column(name = "bet_id")
     private Integer betId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL) // fetch type
+    @ManyToOne(cascade = CascadeType.ALL) // fetch type
     @JoinColumn(name = "user_owner_id")
     private User userOwner;
 
@@ -34,8 +34,11 @@ public class Bet {
     }
 
     public void setUserOwner(User userOwner) {
+        if (this.userOwner != null) {
+            this.userOwner.removeUserBet(this);
+        }
         this.userOwner = userOwner;
-        userOwner.addUserBet(this);
+        // userOwner.addUserBet(this);
     }
 
     public Double getBetPrice() {
