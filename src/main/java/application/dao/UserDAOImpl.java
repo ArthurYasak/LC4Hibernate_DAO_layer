@@ -1,7 +1,6 @@
 package application.dao;
 
 import application.exceptions.DAOException;
-import application.functionalInterfaces.MyRunnable;
 import application.models.User;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -105,7 +104,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    private void withTransaction(Transaction transaction, MyRunnable runnable) throws DAOException {
+    private void withTransaction(Transaction transaction, Runnable runnable) throws DAOException {
         try {
             runnable.run();
             transaction.commit();

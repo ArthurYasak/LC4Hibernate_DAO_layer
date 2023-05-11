@@ -28,13 +28,19 @@ public class Main {
         user1Data.setSurname("Yasak");
         user1.setUserData(user1Data);
 
-        Optional.ofNullable(user1).ifPresentOrElse(
-                    u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
-                            ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
-                            () -> System.out.println("userData is NULL")
-                    ),
-                    () -> System.out.println("user is NULL")
-        );
+        // Optional.ofNullable(user1).ifPresentOrElse(
+        //             u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
+        //                     ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
+        //                     () -> System.out.println("userData is NULL")
+        //             ),
+        //             () -> System.out.println("user is NULL")
+        // );
+
+        var value1 = Optional.ofNullable(user1)
+                .map(User::getUserData)
+                .map(u -> String.format("POJO user %s is: %s\n", u.getName(), u))
+                .orElse("POJO user 1 is NULL");
+        System.out.println(value1);
 
         try {
             userDAO.add(user1);
@@ -79,13 +85,18 @@ public class Main {
         user2.setAuthorizationData(user2Authorization);
 
 
-        Optional.ofNullable(user2).ifPresentOrElse(
-                u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
-                        ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
-                        () -> System.out.println("userData is NULL")
-                ),
-                () -> System.out.println("user is NULL")
-        );
+        // Optional.ofNullable(user2).ifPresentOrElse(
+        //         u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
+        //                 ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
+        //                 () -> System.out.println("userData is NULL")
+        //         ),
+        //         () -> System.out.println("user is NULL")
+        // );
+        var value2 = Optional.ofNullable(user2)
+                .map(User::getUserData)
+                .map(u -> String.format("POJO user %s is: %s\n", u.getName(), u))
+                .orElse("POJO user 2 is NULL");
+        System.out.println(value2);
 
         try {
             userDAO.add(user2);
@@ -95,7 +106,6 @@ public class Main {
             e.printStackTrace();
             System.out.println("User was NOT add " + '\n');
         }
-
 
         try {
             user2 = userDAO.update(user2);
