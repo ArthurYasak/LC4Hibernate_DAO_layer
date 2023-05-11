@@ -1,7 +1,10 @@
 package application.main;
 
 import application.dao.UserDAOImpl;
+import application.exceptions.DAOException;
 import application.models.*;
+
+import java.util.Optional;
 
 
 public class Main {
@@ -9,7 +12,8 @@ public class Main {
         UserDAOImpl userDAO = new UserDAOImpl();
 
         try {
-            // userDAO.deleteAll();
+            userDAO.deleteAll();
+            System.out.println("ALL users was DELETE \n");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("users was NOT delete \n");
@@ -24,13 +28,19 @@ public class Main {
         user1Data.setSurname("Yasak");
         user1.setUserData(user1Data);
 
-        System.out.printf("POJO User %s: %s\n", (user1 == null ?
-                "null" : (user1.getUserData() == null ?
-                "null" : user1.getUserData().getName())), user1);
+        Optional.ofNullable(user1).ifPresentOrElse(
+                    u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
+                            ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
+                            () -> System.out.println("userData is NULL")
+                    ),
+                    () -> System.out.println("user is NULL")
+        );
 
         try {
             userDAO.add(user1);
-        } catch (Exception e) {
+            System.out.println("User was add: " + user1 + '\n');
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User was NOT add " + '\n');
         }
@@ -44,7 +54,9 @@ public class Main {
 
         try {
             user1 = userDAO.update(user1);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user1.getUserId(), user1);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
         }
@@ -66,20 +78,30 @@ public class Main {
         user2Authorization.setPassword("root");
         user2.setAuthorizationData(user2Authorization);
 
-        System.out.printf("POJO User %s: %s\n", (user2 == null ?
-                "null" : (user2.getUserData() == null ?
-                "null" : user2.getUserData().getName())), user2);
+
+        Optional.ofNullable(user2).ifPresentOrElse(
+                u -> Optional.ofNullable(u.getUserData()).ifPresentOrElse(
+                        ud -> System.out.printf("POJO user %s : %s\n", ud.getName(), u),
+                        () -> System.out.println("userData is NULL")
+                ),
+                () -> System.out.println("user is NULL")
+        );
 
         try {
             userDAO.add(user2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("User was add: " + user2 + '\n');
+        } catch (DAOException e) {
+            e.getMessage();
+            e.printStackTrace();
+            System.out.println("User was NOT add " + '\n');
         }
 
 
         try {
             user2 = userDAO.update(user2);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user2.getUserId(), user2);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
         }
@@ -90,7 +112,9 @@ public class Main {
 
         try {
             user1 = userDAO.update(user1);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user1.getUserId(), user1);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
         }
@@ -102,7 +126,9 @@ public class Main {
 
         try {
             user1 = userDAO.update(user1);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user1.getUserId(), user1);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
         }
@@ -113,7 +139,9 @@ public class Main {
 
         try {
             user1 = userDAO.update(user1);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user1.getUserId(), user1);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
         }
@@ -124,7 +152,9 @@ public class Main {
 
         try {
             user2 = userDAO.update(user2);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user2.getUserId(), user2);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
         }
@@ -139,7 +169,9 @@ public class Main {
 
         try {
             user2 = userDAO.update(user2);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user2.getUserId(), user2);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
         }
@@ -148,7 +180,9 @@ public class Main {
 
         try {
             user1 = userDAO.update(user1);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user1.getUserId(), user1);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user1.getUserId() + " was NOT update \n ");
         }
@@ -158,44 +192,54 @@ public class Main {
 
         try {
             user2 = userDAO.update(user2);
-        } catch (Exception e) {
+            System.out.printf("User with id %d was update: %s\n", user2.getUserId(), user2);
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User: " + user2.getUserId() + " was NOT update \n ");
         }
 
-        int requiredId = 4;
+        int requiredId = 18;
         try {
-            userDAO.getById(requiredId);
-        } catch (Exception e) {
+            User userById = userDAO.getById(requiredId);
+            System.out.println(userById != null ?
+                    ("User by id: " + requiredId + ": " + userById + '\n') :
+                    ("There's NO user with id: " + requiredId + '\n'));
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("Can NOT find user with id: " + requiredId + '\n');
         }
 
-        int deletedId = 3;
+        int deletedId = 19;
         try {
             userDAO.deleteById(deletedId);
-        } catch(Exception e) {
+        } catch(DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("User with id: " + deletedId + " was NOT deleted \n");
         }
 
         try {
             userDAO.getFirstUser();
-        } catch (Exception e) {
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("Can NOT return first user \n");
         }
 
         try {
             userDAO.getLastUser();
-        } catch (Exception e) {
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("Can NOT return last user \n");
         }
 
         try {
             userDAO.getAll();
-        } catch (Exception e) {
+        } catch (DAOException e) {
+            e.getMessage();
             e.printStackTrace();
             System.out.println("Can NOT print all users");
         }

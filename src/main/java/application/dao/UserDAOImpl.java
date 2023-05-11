@@ -1,5 +1,7 @@
 package application.dao;
 
+import application.exceptions.DAOException;
+import application.functionalInterfaces.MyRunnable;
 import application.models.User;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -8,6 +10,7 @@ import org.hibernate.query.Query;
 import application.utils.HibernateSessionFactoryUtil;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -16,17 +19,14 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public void add(User user) throws Exception {
+    public void add(User user) throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.persist(user);
-            transaction.commit();
-            System.out.println("User was add: " + user + '\n');
+            withTransaction(session.beginTransaction(), () -> session.persist(user));
         }
     }
 
     @Override
-    public List<User> getAll() throws Exception {
+    public List<User> getAll() throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
             Query<User> query = session.createQuery("from User", User.class);
             System.out.println("ALL users: \n" + query.list() + '\n');
@@ -35,50 +35,44 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getById(Integer userId) throws Exception {
+    public User getById(Integer userId) throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
             User user = session.get(User.class, userId);
-            System.out.println(user != null ?
-                    ("User by id: " + userId + ": " + user + '\n') : ("There's NO user with id: " + userId + '\n'));
             return user;
         }
     }
 
     @Override
-    public User update(User user) throws Exception {
+    public User update(User user) throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
-            Transaction transaction = session.beginTransaction();
-            User updUser = session.merge(user);
-            transaction.commit();
-            System.out.println("Updated user: " + user.getUserId() + ": " + updUser + '\n');
-            return updUser;
+            return withTransaction(session.beginTransaction(), () -> session.merge(user));
         }
     }
 
     @Override
-    public void deleteAll() throws Exception {
+    public void deleteAll() throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
-            Transaction transaction = session.beginTransaction();
-            Query<User> query = session.createNativeQuery("DELETE FROM Users", User.class); //added Generic <User>
-            query.executeUpdate();
-            transaction.commit();
-            System.out.println("ALL users was DELETE \n");
+            withTransaction(session.beginTransaction(), () -> {
+                Query<User> query = session.createNativeQuery("DELETE FROM Users", User.class);
+                query.executeUpdate();
+            });
         }
     }
 
     @Override
-    public void deleteById(Integer userId) throws Exception {
+    public void deleteById(Integer userId) throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
-            Transaction transaction = session.beginTransaction();
-            User userForRemove = getById(userId);
-            System.out.println("USER FOR REMOVE: " + userForRemove);
-            session.remove(userForRemove);
-            transaction.commit();
+            withTransaction(session.beginTransaction(), () -> {
+                User userForRemove = getById(userId);
+                System.out.println("USER FOR DELETE: " + userForRemove);
+                session.remove(userForRemove);
+            });
+
             System.out.println("User with id: " + userId + " was DELETED \n");
         }
     }
 
-    public User getFirstUser() throws Exception {
+    public User getFirstUser() throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
             Query<User> query = session.createQuery("from User", User.class);
             ScrollableResults<User> scroll = query.scroll();
@@ -89,7 +83,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    public User getLastUser() throws Exception {
+    public User getLastUser() throws DAOException {
         try (Session session = HibernateSessionFactoryUtil.getSession()) {
             Query<User> query = session.createQuery("from User", User.class);
             ScrollableResults<User> scroll = query.scroll();
@@ -97,6 +91,27 @@ public class UserDAOImpl implements UserDAO {
             User lastUser = scroll.get();
             System.out.println("LAST user is: " + lastUser + '\n');
             return lastUser;
+        }
+    }
+
+    private <T> T withTransaction(Transaction transaction, Supplier<T> supplier) throws DAOException {
+        try {
+            T result = supplier.get();
+            transaction.commit();
+            return result;
+        } catch(Exception e) {
+            transaction.rollback();
+            throw new DAOException("Error at transaction", e);
+        }
+    }
+
+    private void withTransaction(Transaction transaction, MyRunnable runnable) throws DAOException {
+        try {
+            runnable.run();
+            transaction.commit();
+        } catch(Exception e) {
+            transaction.rollback();
+            throw new DAOException("Error at transaction", e);
         }
     }
 
